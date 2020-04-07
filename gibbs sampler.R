@@ -31,6 +31,10 @@ gibbs.activity.center=function(dat,grid.coord,n.ac,ac.coord.init,gamma1,possib.a
   #pre-calculate distances between each potential AC location (possib.ac) and each actual location in our data (grid.coord)
   dist.mat=GetDistance(AcCoord=data.matrix(possib.ac),GridCoord=data.matrix(grid.coord), 
                        Ngrid=nrow(grid.coord), Nac=nrow(possib.ac))
+  ratios=c(seq(from=0.01,to=0.05,by=0.01),
+           seq(from=0.05,to=0.50,by=0.05))
+  ratios=unique(ratios)
+  phi.values=-log(ratios)/(0.49*max(dist.mat))
   
   #gibbs sampler
   for (i in 1:ngibbs){

@@ -1,5 +1,5 @@
 rm(list=ls(all=TRUE))
-set.seed(10)
+set.seed(15)
 
 #read important functions
 setwd('U:\\GIT_models\\AC_mixed')
@@ -15,7 +15,7 @@ grid.coord=read.csv('fake data grid.csv',as.is=T) #geographical coordinates of l
 #basic setup
 ngibbs=1000
 nburn=ngibbs/2
-n.ac=5
+n.ac=20
 gamma1=0.1
 
 #initial coordinates of activity centers (define this based on data instead of uninformative as below)

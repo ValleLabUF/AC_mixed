@@ -1,9 +1,9 @@
 rm(list=ls(all=TRUE))
-set.seed(1)
+set.seed(111)
 
 #basic setup
 n.tsegm=400
-n.ac=5
+n.ac=8
 n.grid=100
 n=floor(runif(n.tsegm,min=10,max=900))
 
@@ -35,7 +35,7 @@ image(theta)
 theta.true=theta
 
 #distance decay parameter
-phi.true=phi=0.1
+phi.true=phi=0.06
 
 #calculate probabilities associated with each n.ac
 probs=matrix(NA,n.ac,n.grid)

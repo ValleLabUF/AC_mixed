@@ -1,3 +1,5 @@
+// [[Rcpp::depends("RcppArmadillo")]]
+#include <RcppArmadillo.h>
 #include <Rcpp.h>
 #include <iostream>
 #include <ctime>
@@ -23,18 +25,6 @@ int cat1(double value, NumericVector prob) {
   return res;
 }
 
-//' This function samples z's from a categorical distribution
-// [[Rcpp::export]]
-IntegerVector rmultinom1(NumericMatrix prob, NumericVector randu) {
-  
-  IntegerVector z(prob.nrow());
-
-  for(int i=0; i<prob.nrow();i++){
-    z[i]=cat1(randu[i],prob(i,_));
-  }
-  return z;
-}
-
 //' This function calculates distance between two sets of coordinates
 // [[Rcpp::export]]
 NumericMatrix GetDistance(NumericMatrix AcCoord,NumericMatrix GridCoord, int Ngrid, int Nac) {
@@ -47,18 +37,6 @@ NumericMatrix GetDistance(NumericMatrix AcCoord,NumericMatrix GridCoord, int Ngr
       x2=pow(GridCoord(i,0)-AcCoord(j,0),2.0);
       y2=pow(GridCoord(i,1)-AcCoord(j,1),2.0);
       res(i,j)=sqrt(x2+y2);
-    }
-  }
-  return res;
-}
-
-//' This function helps calculate mloglikel
-// [[Rcpp::export]]
-NumericMatrix mloglikel(int ntsegm, int ngrid, NumericMatrix lprob,IntegerMatrix dat){
-  NumericMatrix res(ntsegm,ngrid);
-  for (int i=0; i<ntsegm; i++){
-    for (int j=0; j<ngrid; j++){
-      res(i,j)=res(i,j)+dat(i,j)*lprob(i,j);
     }
   }
   return res;
@@ -79,4 +57,36 @@ NumericMatrix GetTheta(NumericVector v, int nac, int ntsegm){
     }
   }
   return theta;
+}
+
+//' This function samples z
+// [[Rcpp::export]]
+
+List SampleZ(int ntsegm, int ngrid, int nac, NumericVector z,
+             IntegerMatrix dat, NumericMatrix theta, NumericMatrix ProbDist){
+  //create array
+  arma::cube z1(z.begin(), ntsegm, ngrid, nac, false);
+  NumericVector prob(nac);
+  int ind;
+  //sample z
+  for(int i=0; i<ntsegm; i++){
+    for(int j=0; j<ngrid; j++){
+      if(dat(i,j)>0){
+        for(int k=0; k<nac; k++){
+          prob[k]=theta(i,k)*ProbDist(k,j);          
+        }
+        prob=prob/sum(prob);
+        
+        //sample cluster memberships from multinomial
+        NumericVector runif1=runif(dat(i,j));
+        for(int m=0; m<dat(i,j); m++){
+          ind=cat1(runif1[m], prob);  
+          z1(i,j,ind)=z1(i,j,ind)+1;
+        }
+      }
+    }
+  }
+
+  List L = List::create(Named("z") =z1);
+  return(L);
 }

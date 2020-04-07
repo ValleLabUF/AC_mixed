@@ -3,8 +3,7 @@ get.calc.mloglik=function(dist.mat.sel,phi,dat,n.tsegm,n.ac,n.grid,theta){
   prob=exp(-phi*dist.mat.sel)
   prob1=prob/rowSums(prob)
   prob.mult=theta%*%prob1
-  res1=mloglikel(ntsegm=n.tsegm, ngrid=n.grid, lprob=log(prob.mult), dat=dat)
-  res1
+  dat*log(prob.mult)
 }
 #-------------------------------------------------------------
 sample.ac=function(ac.ind,dat,theta,n.ac,n.grid,phi,dist.mat,n.tsegm,n.possib.ac){
@@ -56,20 +55,20 @@ sample.z=function(ac.ind,dist.mat,n.grid,n.ac,n.tsegm,dat,phi,theta){
   prob.dist=prob/rowSums(prob)
   
   #sample z
-  z=array(0,dim=c(n.tsegm,n.grid,n.ac))
-  for (i in 1:n.tsegm){
-    for (j in 1:n.grid){
-      if (dat[i,j]>0){
-        tmp=rep(NA,n.ac)
-        for (k in 1:n.ac){
-          tmp[k]=theta[i,k]*prob.dist[k,j]
-        }
-        tmp1=tmp/sum(tmp)
-        z[i,j,]=rmultinom(1,size=dat[i,j],prob=tmp1)
-      }
-    }
-  }
-  z
+  # z=array(0,dim=c(n.tsegm,n.grid,n.ac))
+  # for (i in 1:n.tsegm){
+  #   for (j in 1:n.grid){
+  #     if (dat[i,j]>0){
+  #       tmp=theta[i,]*prob.dist[,j]
+  #       tmp1=tmp/sum(tmp)
+  #       z[i,j,]=rmultinom(1,size=dat[i,j],prob=tmp1)
+  #     }
+  #   }
+  # }
+  tmp=SampleZ(ntsegm=n.tsegm, ngrid=n.grid, nac=n.ac,
+              z=rep(0,n.tsegm*n.grid*n.ac),
+              dat=dat, theta=theta, ProbDist=prob.dist)
+  tmp$z
 }
 #-----------------------------------
 acceptMH <- function(p0,p1,x0,x1,BLOCK){   #accept for M, M-H
