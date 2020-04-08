@@ -71,8 +71,7 @@ gibbs.activity.center=function(dat,grid.coord,n.ac,ac.coord.init,gamma1,possib.a
     theta=GetTheta(v=v,nac=n.ac,ntsegm=n.tsegm)
     
     #get loglikel
-    tmp=get.calc.mloglik(dist.mat.sel=dist.mat[ac.ind,],phi=phi,dat=dat,
-                         n.tsegm=n.tsegm,n.ac=n.ac,n.grid=n.grid,theta=theta)
+    tmp=get.calc.mloglik(dist.mat.sel=dist.mat[ac.ind,],phi=phi,dat=dat,theta=theta)
     logl=sum(tmp)
     
     if (i<nburn & i%%adaptMH==0){

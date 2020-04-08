@@ -1,5 +1,5 @@
 #calculates part of the marginal loglikelihood after integrating our the z's
-get.calc.mloglik=function(dist.mat.sel,phi,dat,n.tsegm,n.ac,n.grid,theta){
+get.calc.mloglik=function(dist.mat.sel,phi,dat,theta){
   prob=exp(-phi*dist.mat.sel)
   prob1=prob/rowSums(prob)
   prob.mult=theta%*%prob1
@@ -15,10 +15,8 @@ sample.ac=function(ac.ind,dat,theta,n.ac,n.grid,phi,dist.mat,n.tsegm,n.possib.ac
     ac.ind.new[i]=ind
     
     #get marginal loglikel
-    tmp.old=get.calc.mloglik(dist.mat.sel=dist.mat[ac.ind.old,],phi=phi,dat=dat,
-                             n.tsegm=n.tsegm,n.ac=n.ac,n.grid=n.grid,theta=theta)
-    tmp.new=get.calc.mloglik(dist.mat.sel=dist.mat[ac.ind.new,],phi=phi,dat=dat,
-                             n.tsegm=n.tsegm,n.ac=n.ac,n.grid=n.grid,theta=theta)
+    tmp.old=get.calc.mloglik(dist.mat.sel=dist.mat[ac.ind.old,],phi=phi,dat=dat,theta=theta)
+    tmp.new=get.calc.mloglik(dist.mat.sel=dist.mat[ac.ind.new,],phi=phi,dat=dat,theta=theta)
     pold=sum(tmp.old)
     pnew=sum(tmp.new)
     
@@ -35,10 +33,8 @@ sample.phi=function(ac.ind,dist.mat,n.grid,n.ac,phi,jump,dat,n.tsegm,theta){
   
   #get marginal loglikel
   dist.mat1=dist.mat[ac.ind,]
-  tmp.old=get.calc.mloglik(dist.mat.sel=dist.mat1,phi=old,dat=dat,
-                           n.tsegm=n.tsegm,n.ac=n.ac,n.grid=n.grid,theta=theta)
-  tmp.new=get.calc.mloglik(dist.mat.sel=dist.mat1,phi=new,dat=dat,
-                           n.tsegm=n.tsegm,n.ac=n.ac,n.grid=n.grid,theta=theta)
+  tmp.old=get.calc.mloglik(dist.mat.sel=dist.mat1,phi=old,dat=dat,theta=theta)
+  tmp.new=get.calc.mloglik(dist.mat.sel=dist.mat1,phi=new,dat=dat,theta=theta)
   pold=sum(tmp.old)
   pnew=sum(tmp.new)
   
