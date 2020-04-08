@@ -19,6 +19,7 @@ for (i in 1:ncol(z.true)){
   print(max(tmp))
   ordem[i]=ind
 }
+length(unique(ordem))
 plot(z.estim[,ordem],z.true)
 
 #--------------------
@@ -45,6 +46,6 @@ lines(rango,rango,col='red')
 #--------------------
 #look at spatial distribution
 plot(possib.ac$x,possib.ac$y)
-points(ac.coord[,1],ac.coord[,2],col='blue',cex=2)
+# points(ac.coord[,1],ac.coord[,2],col='blue',cex=2)
 points(ac.coord[ordem,1],ac.coord[ordem,2],col='purple',cex=1.5)
 points(ac.coord.true$x,ac.coord.true$y,col='red',cex=0.8,pch=19)

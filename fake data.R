@@ -1,5 +1,5 @@
 rm(list=ls(all=TRUE))
-set.seed(111)
+set.seed(154)
 
 #basic setup
 n.tsegm=400

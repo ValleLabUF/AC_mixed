@@ -31,11 +31,7 @@ gibbs.activity.center=function(dat,grid.coord,n.ac,ac.coord.init,gamma1,possib.a
   #pre-calculate distances between each potential AC location (possib.ac) and each actual location in our data (grid.coord)
   dist.mat=GetDistance(AcCoord=data.matrix(possib.ac),GridCoord=data.matrix(grid.coord), 
                        Ngrid=nrow(grid.coord), Nac=nrow(possib.ac))
-  ratios=c(seq(from=0.01,to=0.05,by=0.01),
-           seq(from=0.05,to=0.50,by=0.05))
-  ratios=unique(ratios)
-  phi.values=-log(ratios)/(0.49*max(dist.mat))
-  
+
   #gibbs sampler
   for (i in 1:ngibbs){
     print(i)
@@ -48,10 +44,11 @@ gibbs.activity.center=function(dat,grid.coord,n.ac,ac.coord.init,gamma1,possib.a
     # ac.ind=ac.ind.true
     
     #sample phi
-    tmp=sample.phi(ac.ind=ac.ind,dist.mat=dist.mat,n.grid=n.grid,
-                   n.ac=n.ac,phi=phi,jump=jump1$phi,dat=dat,n.tsegm=n.tsegm,theta=theta)
-    phi=tmp$phi
-    accept1$phi=accept1$phi+tmp$accept
+    # tmp=sample.phi(ac.ind=ac.ind,dist.mat=dist.mat,n.grid=n.grid,
+    #                n.ac=n.ac,phi=phi,jump=jump1$phi,dat=dat,n.tsegm=n.tsegm,theta=theta)
+    # phi=tmp$phi
+    # accept1$phi=accept1$phi+tmp$accept
+    phi=SamplePhi(w=0.02,MaxIter=100,phi=phi,dat=dat,theta=theta,DistMatSel=dist.mat[ac.ind,])
     # phi=phi.true
     
     #sample z
@@ -61,24 +58,17 @@ gibbs.activity.center=function(dat,grid.coord,n.ac,ac.coord.init,gamma1,possib.a
     
     #sample theta
     v=sample.v(z=z,n.ac=n.ac,gamma1=gamma1,n.tsegm=n.tsegm)
-    # theta=rep(NA,n.ac)
-    # theta[1]=v[1]
-    # tmp=(1-v[1])
-    # for (j in 2:n.ac){
-    #   theta[j]=v[j]*tmp
-    #   tmp=tmp*(1-v[j])
-    # } 
     theta=GetTheta(v=v,nac=n.ac,ntsegm=n.tsegm)
     
     #get loglikel
-    tmp=get.calc.mloglik(dist.mat.sel=dist.mat[ac.ind,],phi=phi,dat=dat,theta=theta)
-    logl=sum(tmp)
-    
+    logl=GetCalcMloglik(dist.mat.sel=dist.mat[ac.ind,],phi=phi,dat=dat,theta=theta)
+
     if (i<nburn & i%%adaptMH==0){
       #adapt MH
-      tmp=print.adapt(accept1z=accept1,jump1z=jump1,accept.output=adaptMH)
-      jump1=tmp$jump1
-      accept1=tmp$accept1
+      # tmp=print.adapt(accept1z=accept1,jump1z=jump1,accept.output=adaptMH)
+      # jump1=tmp$jump1
+      # accept1=tmp$accept1
+      print(accept1$ac.ind/i)
       
       #re-order data from time to time according to theta (largest to smallest)
       theta.m=apply(theta,2,median)
